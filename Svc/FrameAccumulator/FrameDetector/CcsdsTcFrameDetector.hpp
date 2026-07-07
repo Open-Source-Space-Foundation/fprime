@@ -9,6 +9,7 @@
 #include "Fw/FPrimeBasicTypes.hpp"
 #include "Svc/Ccsds/Types/FppConstantsAc.hpp"
 #include "Svc/FrameAccumulator/FrameDetector.hpp"
+#include "config/FppConstantsAc.hpp"
 
 namespace Svc {
 namespace FrameDetectors {
@@ -40,9 +41,23 @@ class CcsdsTcFrameDetector : public FrameDetector {
     //! \return status of the detection to be paired with size_out
     Status detect(const Types::CircularBuffer& data, FwSizeType& size_out) const override;
 
-  protected:
-    //! \brief expected flags and spacecraft ID token for a valid CCSDS TC frame
-    const U16 m_expectedFlagsAndScIdToken = (0x1 << Ccsds::TCSubfields::BypassFlagOffset) | (ComCfg::SpacecraftId);
+    //! \brief Configure the detector to detect TC frames for one SCID or all SCIDs
+    //!
+    //! By default, the detector accepts only frames matching the spacecraft ID set in config/ComCfg.fpp.
+    //!
+    //! \param spacecraftId The spacecraft ID to accept when acceptAllScid is false
+    //! \param acceptAllScid If true, the detector will accept all SCIDs. If false, it will only accept spacecraftId
+    void configure(U16 spacecraftId, bool acceptAllScid);
+
+  private:
+    //! \brief expected TC frame flags token, excluding spacecraft ID bits
+    const U16 m_expectedFlagsToken = (0x1 << Ccsds::TCSubfields::BypassFlagOffset);
+
+    //! \brief The spacecraft ID this detector is configured to handle
+    U16 m_spacecraftId = ComCfg::SpacecraftId;
+
+    //! \brief Flag to accept all SCIDs
+    bool m_acceptAllScid = false;
 
 };  // class CcsdsTcFrameDetector
 }  // namespace FrameDetectors

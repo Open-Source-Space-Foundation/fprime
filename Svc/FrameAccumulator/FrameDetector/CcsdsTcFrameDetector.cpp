@@ -16,6 +16,11 @@
 namespace Svc {
 namespace FrameDetectors {
 
+void CcsdsTcFrameDetector::configure(U16 spacecraftId, bool acceptAllScid) {
+    this->m_spacecraftId = spacecraftId;
+    this->m_acceptAllScid = acceptAllScid;
+}
+
 FrameDetector::Status CcsdsTcFrameDetector::detect(const Types::CircularBuffer& data, FwSizeType& size_out) const {
     if (data.get_allocated_size() < Ccsds::TCHeader::SERIALIZED_SIZE + Ccsds::TCTrailer::SERIALIZED_SIZE) {
         size_out = Ccsds::TCHeader::SERIALIZED_SIZE + Ccsds::TCTrailer::SERIALIZED_SIZE;
@@ -37,8 +42,16 @@ FrameDetector::Status CcsdsTcFrameDetector::detect(const Types::CircularBuffer& 
     status = header.deserializeFrom(header_ser_buffer);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
 
-    if (header.get_flagsAndScId() != this->m_expectedFlagsAndScIdToken) {
-        // If the flags and SC ID do not match the expected token, we don't have a valid frame
+    const U16 flags_and_scid = header.get_flagsAndScId();
+    const U16 flags = flags_and_scid & static_cast<U16>(~Ccsds::TCSubfields::SpacecraftIdMask);
+    const U16 spacecraft_id = flags_and_scid & Ccsds::TCSubfields::SpacecraftIdMask;
+
+    if (flags != this->m_expectedFlagsToken) {
+        // If the fixed flags do not match the expected token, we don't have a valid frame
+        return Status::NO_FRAME_DETECTED;
+    }
+    if ((not this->m_acceptAllScid) && spacecraft_id != this->m_spacecraftId) {
+        // If the SCID does not match the configured value, we don't have a valid frame
         return Status::NO_FRAME_DETECTED;
     }
     // TC protocol defines the Frame Length as number of bytes minus 1, so we add 1 back to get length in bytes
