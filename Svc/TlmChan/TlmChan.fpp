@@ -10,13 +10,13 @@ module Svc {
     guarded input port TlmGet: Fw.TlmGet
 
     @ Run port for starting packet send cycle
-    async input port Run: Svc.Sched
+    async input port Run: Svc.Sched drop
 
     @ Packet send port
     output port PktSend: Fw.Com
 
     @ Ping input port
-    async input port pingIn: Svc.Ping
+    async input port pingIn: Svc.Ping drop
 
     @ Ping output port
     output port pingOut: Svc.Ping
