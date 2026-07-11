@@ -8,7 +8,7 @@ module Svc {
     # ----------------------------------------------------------------------
 
     @ Run input port
-    async input port Run: Svc.Sched
+    async input port Run: Svc.Sched drop
 
     @ Mutexed Sendfile input port
     guarded input port SendFile: Svc.SendFileRequest
@@ -23,7 +23,7 @@ module Svc {
     output port bufferSendOut: Fw.BufferSend
 
     @ Ping input port
-    async input port pingIn: Svc.Ping
+    async input port pingIn: Svc.Ping drop
 
     @ Ping output port
     output port pingOut: Svc.Ping
