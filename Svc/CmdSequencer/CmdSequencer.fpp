@@ -62,7 +62,7 @@ module Svc {
     async input port cmdResponseIn: Fw.CmdResponse
 
     @ Ping in port
-    async input port pingIn: Svc.Ping
+    async input port pingIn: Svc.Ping drop
 
     @ Ping out port
     output port pingOut: Svc.Ping
@@ -80,7 +80,7 @@ module Svc {
     output port comCmdOut: Fw.Com
 
     @ Schedule in port
-    async input port schedIn: Svc.Sched
+    async input port schedIn: Svc.Sched drop
 
     @ Notifies that a sequence has started running
     output port seqStartOut: Svc.CmdSeqIn
