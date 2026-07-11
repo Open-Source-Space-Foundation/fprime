@@ -46,6 +46,17 @@ class TlmPacketizer final : public TlmPacketizerComponentBase, public Fw::ParamE
         const FwChanIdType startLevel                // starting level of packets to send
     );
 
+    //! Enable a telemetry group and set its send rate. Called at topology setup to establish
+    //! defaults before loadParameters() may override with saved values.
+    //!
+    void initGroupRate(
+        const Svc::TelemetrySection& section,  //!< Section to configure
+        FwChanIdType tlmGroup,                 //!< Group identifier (0..MAX_CONFIGURABLE_TLMPACKETIZER_GROUP)
+        const Svc::RateLogic& rateLogic,       //!< Rate logic (must not be SILENCED)
+        U32 minDelta,                          //!< Minimum ticks (ON_CHANGE logic)
+        U32 maxDelta                           //!< Maximum ticks (EVERY_MAX logic)
+    );
+
     //! Destroy object TlmPacketizer
     //!
     ~TlmPacketizer();

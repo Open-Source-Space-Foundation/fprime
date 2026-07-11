@@ -202,6 +202,23 @@ void TlmPacketizer ::configureSectionGroupRate_handler(FwIndexType portNum,
     this->configureSectionGroupRate(section, tlmGroup, rateLogic, minDelta, maxDelta);
 }
 
+void TlmPacketizer::initGroupRate(const Svc::TelemetrySection& section,
+                                   FwChanIdType tlmGroup,
+                                   const Svc::RateLogic& rateLogic,
+                                   U32 minDelta,
+                                   U32 maxDelta) {
+    FW_ASSERT(section.isValid());
+    FW_ASSERT(rateLogic.isValid());
+    FW_ASSERT(rateLogic != Svc::RateLogic::SILENCED);
+    FW_ASSERT(tlmGroup <= MAX_CONFIGURABLE_TLMPACKETIZER_GROUP);
+    TlmPacketizer_GroupConfig& groupConfig =
+        this->m_groupConfigs[static_cast<FwSizeType>(section)][tlmGroup];
+    groupConfig.set_enabled(Fw::Enabled::ENABLED);
+    groupConfig.set_rateLogic(rateLogic);
+    groupConfig.set_min(minDelta);
+    groupConfig.set_max(maxDelta);
+}
+
 //! Handler for input port TlmGet
 Fw::TlmValid TlmPacketizer ::TlmGet_handler(FwIndexType portNum,  //!< The port number
                                             FwChanIdType id,      //!< Telemetry Channel ID
