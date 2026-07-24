@@ -61,8 +61,9 @@ module Svc {
     @ Command response in port
     async input port cmdResponseIn: Fw.CmdResponse
 
-    @ Ping in port
-    async input port pingIn: Svc.Ping
+    @ Ping in port. Droppable: queue-full during overload must not FATAL;
+    @ a missed ping surfaces as a late-ping health warning instead.
+    async input port pingIn: Svc.Ping drop
 
     @ Ping out port
     output port pingOut: Svc.Ping
@@ -79,8 +80,10 @@ module Svc {
     @ Port for sending sequence commands
     output port comCmdOut: Fw.Com
 
-    @ Schedule in port
-    async input port schedIn: Svc.Sched
+    @ Schedule in port. Ticks are droppable: a full queue during transient
+    @ overload must not FW_ASSERT (FATAL) the deployment; the next tick
+    @ resumes timer/timeout bookkeeping.
+    async input port schedIn: Svc.Sched drop
 
     @ Notifies that a sequence has started running
     output port seqStartOut: Svc.CmdSeqIn

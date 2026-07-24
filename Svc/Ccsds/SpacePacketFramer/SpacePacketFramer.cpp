@@ -36,6 +36,21 @@ void SpacePacketFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, c
 
     // Allocate frame buffer
     Fw::Buffer frameBuffer = this->bufferAllocate_out(0, static_cast<Fw::Buffer::SizeType>(frameSize));
+    if ((not frameBuffer.isValid()) || (frameBuffer.getSize() < frameSize)) {
+        // Buffer pool exhausted: drop this frame instead of asserting. Return the
+        // original data upstream and emit a substitute com status so the com queue
+        // handshake keeps flowing (the dropped frame will never produce one).
+        this->log_WARNING_HI_FrameDropped(static_cast<U32>(frameSize));
+        if (frameBuffer.isValid()) {
+            this->bufferDeallocate_out(0, frameBuffer);
+        }
+        this->dataReturnOut_out(0, data, context);
+        if (this->isConnected_comStatusOut_OutputPort(0)) {
+            Fw::Success status = Fw::Success::SUCCESS;
+            this->comStatusOut_out(0, status);
+        }
+        return;
+    }
     auto frameSerializer = frameBuffer.getSerializer();
 
     // -----------------------------------------------

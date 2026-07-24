@@ -14,6 +14,13 @@ module Ccsds {
         @ Port to retrieve the current sequence count for a given APID
         output port getApidSeqCount: Ccsds.ApidSequenceCount
 
+        @ Frame dropped because no buffer of sufficient size was available
+        event FrameDropped(
+            requestedSize: U32 @< Size of the frame buffer that could not be allocated
+        ) severity warning high \
+          format "Dropped frame: could not allocate {} byte frame buffer" \
+          throttle 10
+
         ###############################################################################
         # Standard AC Ports: Required for Channels, Events, Commands, and Parameters  #
         ###############################################################################
