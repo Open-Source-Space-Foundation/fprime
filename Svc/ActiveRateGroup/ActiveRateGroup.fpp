@@ -14,8 +14,9 @@ module Svc {
     @ Scheduler output port to rate group members
     output port RateGroupMemberOut: [ActiveRateGroupOutputPorts] Sched
 
-    @ Ping input port for health
-    async input port PingIn: Ping
+    @ Ping input port for health. Droppable: queue-full during overload must
+    @ not FATAL; a missed ping surfaces as a late-ping health warning instead.
+    async input port PingIn: Ping drop
 
     @ Ping output port for health
     output port PingOut: Ping
