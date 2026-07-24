@@ -63,6 +63,12 @@ TEST(OffNominal, TimeoutOverflowPrevention) {
     tester.test_timeout();
 }
 
+TEST(OffNominal, TimeoutOverflowPreventionFillState) {
+    Svc::ComAggregatorTester tester;
+    tester.test_initial();
+    tester.test_timeout_overflow_prevention_fill_state();
+}
+
 TEST(Nominal, HoldWhileWaiting) {
     Svc::ComAggregatorTester tester;
     tester.test_initial();
