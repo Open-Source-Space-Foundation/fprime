@@ -1,4 +1,5 @@
 Aadil
+AArray
 AClass
 ACTIVERATEGROUP
 ACTIVERATEGROUPCFG
@@ -6,11 +7,14 @@ ACTIVERATEGROUPTESTER
 ACTIVETEXTLOGGERIMPL
 ADDRSTRLEN
 adminlist
+afile
 aleem
 ALLEXTERNALS
 alphanums
 ampcs
 ANamespace
+Aos
+APacket
 apid
 APIDOCS
 APPENDFILE
@@ -27,6 +31,7 @@ autocode
 autocoded
 autocoders
 autocoding
+autorun
 AYYYY
 baremetal
 batchmode
@@ -37,6 +42,8 @@ bibtex
 Bies
 binaryfile
 BINDIR
+bitfield
+Bitfield
 bitmaps
 bitshifts
 bitwidth
@@ -96,6 +103,7 @@ cmdseq
 cmdsequencer
 cntx
 CODEFILE
+CODESONAR
 COLORSTYLE
 colorwheel
 COMBUFFER
@@ -110,6 +118,7 @@ COMMANDDISPATCHERIMPLCFG
 COMPACKET
 COMPACKETQUEUEIN
 COMQUEUE
+COMRETRY
 COMSPLITTER
 COMSTUB
 constexpr
@@ -154,6 +163,7 @@ deframe
 deframed
 deframer
 deframing
+Deinitialization
 deployables
 DEPRECATEDLIST
 deser
@@ -161,6 +171,7 @@ Deserial
 DEVICESM
 DHTML
 diafile
+diffs
 diles
 dinkel
 dnf
@@ -198,6 +209,7 @@ eabi
 eabihf
 eay
 ECLIPSEHELP
+EEnum
 EHAs
 eip
 Elts
@@ -207,6 +219,7 @@ endfunction
 endmacro
 endraw
 enduml
+EPP
 ERRORCHECK
 errornum
 ert
@@ -218,9 +231,11 @@ eventflags
 EVENTPRIMITIVE
 evr
 evt
+exploitability
 externalproject
 FAKELOGGER
 fbuild
+FDISP
 fdp
 featherm
 fecf
@@ -231,6 +246,8 @@ ffff
 Ffs
 fge
 fgt
+FILEDISPATCHER
+FILEDISPATCHERCFG
 FILEDOWNLINK
 FILEDOWNLINKCFG
 FILEHANDLING
@@ -238,6 +255,9 @@ FILEHANDLINGSUBTOPOLOGY
 FILEID
 FILEMANAGERCONFIG
 FILEOPENERROR
+FILETESTER
+FILEWORKER
+FILEWORKERTYPES
 FILEWRITEERROR
 fio
 fle
@@ -278,6 +298,7 @@ getty
 ghprb
 gitmodules
 gmock
+GNC
 Gnd
 gnueabihf
 googletest
@@ -366,6 +387,8 @@ jobrestrictions
 jpl
 jplffs
 jre
+kessler
+kevin
 kermit
 kubiak
 Lammert
@@ -390,14 +413,17 @@ LISTDIRECTORY
 lld
 llu
 LOCALSTATEDIR
+lockfiles
 LOGGERRULES
 LOGPACKET
+Lsb
 lseek
 LTK
 lvar
 LVL
 lxml
 MACROFILE
+MACROSTART
 makefiles
 MAKEFLAGS
 makeindex
@@ -423,6 +449,7 @@ MML
 modbus
 MOVEFILE
 Mpu
+Msb
 msc
 mscfile
 mseconds
@@ -433,7 +460,9 @@ multiarch
 multitool
 mutexattr
 Mutexed
+muxed
 mycompany
+myos
 nasafprime
 nbits
 ncsl
@@ -444,6 +473,9 @@ NODELABEL
 noinline
 NOLINT
 NOLINTNEXTLINE
+nominaldne
+nominalread
+nominalwrite
 noparent
 norecords
 NOSPEC
@@ -470,7 +502,7 @@ optin
 optind
 orgslist
 ortega
-OSAL
+osal
 ostate
 OSTIME
 otherside
@@ -498,6 +530,8 @@ PASSIVERATEGROUP
 PASSIVERATEGROUPIMPLTESTER
 patsubst
 pdflatex
+pdu
+Peet
 penv
 PERLMOD
 PHASERMEMBEROUT
@@ -515,6 +549,7 @@ PORTOUT
 PORTSELECTOR
 ppandian
 pregen
+PREPROC
 prescaler
 prioritization
 PRIORITYQUEUE
@@ -542,12 +577,13 @@ ptbool
 ptf
 pthread
 ptrt
-Pvn
+pvn
 qch
 qhelpgenerator
 QHG
 qhp
 qsf
+racheljt
 RAII
 randtbl
 raspberrypi
@@ -570,6 +606,7 @@ refspec
 REFTOPOLOGY
 REFTOPOLOGYDEFS
 regexs
+remediations
 REMOVEDIRECTORY
 REMOVEFILE
 reprioritize
@@ -578,6 +615,7 @@ rhel
 RHH
 Rizvi
 ROOTDIR
+rowspan
 rpi
 rptr
 SAlias
@@ -590,6 +628,7 @@ scid
 scm
 sdd
 sdiv
+sdls
 searchdata
 SENDPARTIAL
 seqgen
@@ -632,6 +671,7 @@ spdx
 spi
 spidev
 spsc
+sqa
 srandom
 SRCS
 sreddy
@@ -682,6 +722,9 @@ testerbase
 TESTLIST
 testmark
 TESTUTILS
+testwrite
+testwriteoffset
+tfvn
 thisdirdoesnotexist
 thisfiledoesnotexist
 Thu
@@ -689,6 +732,7 @@ timebase
 timerfd
 timetag
 timeval
+timcanham
 Tinternal
 tions
 tjh
@@ -710,6 +754,8 @@ tparam
 TPP
 trinomials
 tts
+Tumbar
+tumbar
 typedef
 typedef'ed
 uart
@@ -726,11 +772,16 @@ UNITTESTASSERT
 unittests
 useconds
 usecs
+USLP
+valdaarhun
 valgrind
 vbai
+vc
 VCA
 vcid
 VCP
+vcs
+vendored
 VFILE
 VID
 vla

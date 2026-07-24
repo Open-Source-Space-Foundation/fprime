@@ -21,6 +21,11 @@ extern "C" {
 // Configuration switches
 // ----------------------------------------------------------------------
 
+// Direct port calls (TODO)
+#ifndef FW_DIRECT_PORT_CALLS
+#define FW_DIRECT_PORT_CALLS 0
+#endif
+
 // Allow objects to have names. Allocates storage for each instance
 #ifndef FW_OBJECT_NAMES
 #define FW_OBJECT_NAMES \
@@ -30,9 +35,9 @@ extern "C" {
 // To reduce binary size, FW_OPTIONAL_NAME(<string>) can be used to substitute strings with an empty string
 // when running with FW_OBJECT_NAMES disabled
 #if FW_OBJECT_NAMES == 1
-#define FW_OPTIONAL_NAME(name) (name)
+#define FW_OPTIONAL_NAME(name) name  // NO_CODESONAR  LANG.PREPROC.MACROSTART/END
 #else
-#define FW_OPTIONAL_NAME(name) ("")
+#define FW_OPTIONAL_NAME(name) ""  // NO_CODESONAR  LANG.PREPROC.MACROSTART/END
 #endif
 
 // Add methods to query an object about its name. Can be overridden by derived classes
@@ -109,6 +114,14 @@ extern "C" {
 // Note: users who want alternate asserts should set assert level to FW_NO_ASSERT and define FW_ASSERT in this header
 #ifndef FW_ASSERT_LEVEL
 #define FW_ASSERT_LEVEL (FW_FILENAME_ASSERT)  //!< Defines the type of assert used
+#endif
+
+// Decide whether the framework should force assertions to always abort.
+// If enabled, allows additional compiler optimizations and prevents code from running after an assertion trips.
+// If disabled (default), allows the FATAL event handler to decide whether code should continue running after an
+// assertion trips.
+#ifndef FW_ASSERTIONS_ALWAYS_ABORT
+#define FW_ASSERTIONS_ALWAYS_ABORT 0
 #endif
 
 // Adjust various configuration parameters in the architecture. Some of the above enables may disable some of the values

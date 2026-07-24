@@ -45,7 +45,7 @@ void FileUplink::bufferSendIn_handler(const FwIndexType portNum, Fw::Buffer& buf
     }
 
     // Read the packet type from the packet buffer
-    FwPacketDescriptorType packetType;
+    FwPacketDescriptorType packetType = 0;
     Fw::SerializeStatus status = buffer.getDeserializer().deserializeTo(packetType);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
 
@@ -132,7 +132,7 @@ void FileUplink::handleDataPacket(const Fw::FilePacket::DataPacket& dataPacket) 
     this->checkSequenceIndex(sequenceIndex);
     const U32 byteOffset = dataPacket.getByteOffset();
     const U32 dataSize = dataPacket.getDataSize();
-    if (byteOffset + dataSize > this->m_file.size) {
+    if ((std::numeric_limits<U32>::max() - byteOffset < dataSize) || (byteOffset + dataSize > this->m_file.size)) {
         this->m_warnings.packetOutOfBounds(sequenceIndex, this->m_file.name);
         return;
     }
