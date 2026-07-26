@@ -266,6 +266,48 @@ void ComAggregatorTester ::test_timeout_overflow_prevention() {
     this->clearHistory();
 }
 
+//! Tests that a stalled dispatch thread in the FILL state cannot flood the queue with timeout
+//! signals past its depth, and that the component recovers cleanly once draining resumes
+void ComAggregatorTester ::test_timeout_overflow_prevention_fill_state() {
+    // Precondition: initial has run. The state machine is now in the FILL state
+    // (m_allow_timeout == true) with an empty aggregation buffer and an empty queue. Unlike
+    // test_timeout_overflow_prevention (which drives m_allow_timeout to false via a comStatusIn
+    // failure before flooding, exercising the WAIT_STATUS-adjacent gate from the pre-existing
+    // fix), this test floods while m_allow_timeout stays true, exercising the FILL-state gap.
+    ASSERT_EQ(this->component.m_queue.getMessagesAvailable(), 0);
+
+    // Simulate a stalled dispatch thread: the rate group keeps delivering 'timeout' ticks (this
+    // port is invoked directly here, exactly as a rate-group member call would) while nothing
+    // drains the component's message queue via dispatchOne. Loop well past the queue depth --
+    // without the FILL-state headroom check, this would keep enqueueing right up to depth and
+    // trip the autocoded queue-full assertion inside aggregationMachine_sendSignal_timeout.
+    for (FwSizeType i = 0; i < static_cast<FwSizeType>(TEST_INSTANCE_QUEUE_DEPTH) * 2; i++) {
+        this->invoke_to_timeout(0, 0);
+        // The queue must never be allowed to reach its full depth: headroom is reserved for the
+        // (at most one each) in-flight 'fill'/'status' signals, so FILL-state flooding cannot trip
+        // the queue-full assert no matter how long the simulated stall runs.
+        ASSERT_LT(this->component.m_queue.getMessagesAvailable(), static_cast<FwSizeType>(TEST_INSTANCE_QUEUE_DEPTH));
+    }
+    // With the aggregation buffer empty, isNotEmpty is false, so every dispatched timeout is a
+    // no-op transition (see test_timeout_zero); flooding has no side effects of its own.
+    ASSERT_from_dataOut_SIZE(0);
+
+    // Confirm recovery once the (simulated) dispatch stall clears and draining resumes: every
+    // queued signal is still processable without error, and the queue returns to empty.
+    // (dispatchOne's underlying doDispatch() issues a BLOCKING queue receive, so drain exactly the
+    // snapshotted number of queued messages via dispatchCurrentMessages rather than looping until
+    // an "empty" status that a blocking dispatch will never produce.)
+    ASSERT_EQ(this->dispatchCurrentMessages(this->component),
+              Svc::ComAggregatorComponentBase::MsgDispatchStatus::MSG_DISPATCH_OK);
+    ASSERT_EQ(this->component.m_queue.getMessagesAvailable(), 0);
+    ASSERT_from_dataOut_SIZE(0);
+    this->clearHistory();
+
+    // Normal fill/timeout operation resumes cleanly after the flood and drain.
+    this->test_fill_multi();
+    this->test_timeout();
+}
+
 void ComAggregatorTester ::test_timeout_zero() {
     // Precondition: initialize has run
     this->invoke_to_timeout(0, 0);

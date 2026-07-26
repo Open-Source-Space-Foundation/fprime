@@ -65,6 +65,10 @@ class ComAggregatorTester final : public ComAggregatorGTestBase {
     //! Tests timeout operation
     void test_timeout_overflow_prevention();
 
+    //! Tests that a stalled dispatch thread in the FILL state cannot flood the queue with timeout
+    //! signals past its depth, and that the component recovers cleanly once draining resumes
+    void test_timeout_overflow_prevention_fill_state();
+
     //! Tests timeout operation sends no empty buffer
     void test_timeout_zero();
 
