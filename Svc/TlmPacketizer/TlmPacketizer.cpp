@@ -89,10 +89,10 @@ void TlmPacketizer::setPacketList(const TlmPacketizerPacketList& packetList,
             entry.ignored = false;
             entry.channelSize = packetList.list[pktEntry]->list[tlmEntry].size;
             // the offset into the buffer will be the current packet length
-            // the offset must fit within FwSignedSizeType to allow for negative values
-            FW_ASSERT(packetLen <= static_cast<FwSizeType>(std::numeric_limits<FwSignedSizeType>::max()),
+            // the offset must fit within I16 to allow for the -1 sentinel value
+            FW_ASSERT(packetLen <= static_cast<FwSizeType>(std::numeric_limits<I16>::max()),
                       static_cast<FwAssertArgType>(packetLen));
-            entry.packetOffset[pktEntry] = static_cast<FwSignedSizeType>(packetLen);
+            entry.packetOffset[pktEntry] = static_cast<I16>(packetLen);
 
             packetLen += entry.channelSize;
 
