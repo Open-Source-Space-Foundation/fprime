@@ -24,10 +24,10 @@ module Svc {
     async input port seqCmdBuff: [CmdDispatcherSequencePorts] Fw.Com hook
 
     @ Ping input port
-    async input port pingIn: Svc.Ping
+    async input port pingIn: Svc.Ping drop
 
     @ Run port used to emit telemetry
-    async input port run: Svc.Sched
+    async input port run: Svc.Sched drop
 
     @ Ping output port
     output port pingOut: Svc.Ping

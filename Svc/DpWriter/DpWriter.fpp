@@ -8,7 +8,7 @@ module Svc {
     # ----------------------------------------------------------------------
 
     @ Schedule in port
-    async input port schedIn: Svc.Sched
+    async input port schedIn: Svc.Sched drop
 
     # ----------------------------------------------------------------------
     # Ports for handling data products
