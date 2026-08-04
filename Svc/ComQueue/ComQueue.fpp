@@ -18,8 +18,15 @@ module Svc {
       @ Port for emitting data ready to be sent
       output port dataOut: Svc.ComDataWithContext
 
-      @ Port for receiving the status signal
-      async input port comStatusIn: Fw.SuccessCondition
+      @ Port for receiving the status signal.
+      @ `block` (not the default assert) because the com-status protocol is
+      @ one-shot: the single arming SUCCESS emitted at startup shares this
+      @ message queue with the boot event burst on comPacketQueueIn. If the
+      @ queue is momentarily full the assert path drops the status (fatally
+      @ wedging the queue in WAITING forever on deployments whose assert hook
+      @ does not halt); blocking the (rare, low-rate) status sender until a
+      @ slot frees guarantees delivery at zero memory cost.
+      async input port comStatusIn: Fw.SuccessCondition block
 
       @ Port array for receiving Fw::ComBuffers
       async input port comPacketQueueIn: [ComQueueComPorts] Fw.Com drop
