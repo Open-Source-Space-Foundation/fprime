@@ -40,9 +40,27 @@ void ComAggregator ::comStatusIn_handler(FwIndexType portNum, Fw::Success& condi
     this->aggregationMachine_sendSignal_status(condition);
 }
 
+extern "C" void uplink_trace(unsigned char, unsigned short);
 void ComAggregator ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const ComCfg::FrameContext& context) {
+    // ack packets are exactly 12B raw + framing; use size as a cheap ack-vs-other discriminator in the trace
+    uplink_trace(20, (unsigned short)data.getSize());
     Svc::ComDataContextPair pair(data, context);
     this->aggregationMachine_sendSignal_fill(pair);
+    // PROTOTYPE: FW_PACKET_HAND (uplink ACK) traffic bypasses the FILL-state
+    // accumulate-until-full-or-timeout wait. The buffer manager already tags this
+    // packet's FrameContext.apid via ComQueue (set from the wire descriptor,
+    // ComQueue.cpp:283/301) -- no new port/schema needed. Immediately re-signal
+    // 'timeout' right after 'fill': if the fill just transitioned us into FILL
+    // state (non-empty), this forces an instant doSend instead of waiting for the
+    // next rate-group tick. If the fill instead went to doHold (aggregator was
+    // still in WAIT_STATUS on a prior send), this call is a no-op -- WAIT_STATUS
+    // has no 'timeout' handler in the state chart, so it's safely dropped; that
+    // packet gets flushed as soon as the prior status returns and doClear/doFill
+    // replay it, same as it already worked before this change.
+    if (context.get_apid() == ComCfg::Apid::FW_PACKET_HAND) {
+        uplink_trace(23, 1);
+        this->aggregationMachine_sendSignal_timeout();
+    }
 }
 
 void ComAggregator ::dataReturnIn_handler(FwIndexType portNum, Fw::Buffer& data, const ComCfg::FrameContext& context) {
@@ -51,6 +69,7 @@ void ComAggregator ::dataReturnIn_handler(FwIndexType portNum, Fw::Buffer& data,
 }
 
 void ComAggregator ::timeout_handler(FwIndexType portNum, U32 context) {
+    uplink_trace(21, (unsigned short)(this->m_allow_timeout ? 1 : 0));
     // Timeout is ignored in WAIT_STATUS state. However, the queue may not process timeout messages until the wait
     // status is returned because the port chain may be synchronous and downstream components (radio, retry, etc) may
     // take a long time to complete the transmission of data. This can cause the queue to overflow with messages that
@@ -104,6 +123,7 @@ void ComAggregator ::Svc_AggregationMachine_action_doFill(SmId smId,
 }
 
 void ComAggregator ::Svc_AggregationMachine_action_doSend(SmId smId, Svc_AggregationMachine::Signal signal) {
+    uplink_trace(22, (unsigned short)this->m_frameBuffer.getSize());
     // Send only when the buffer will be valid
     if (this->m_frameSerializer.getSize() > 0) {
         this->m_bufferState = Fw::Buffer::OwnershipState::NOT_OWNED;
