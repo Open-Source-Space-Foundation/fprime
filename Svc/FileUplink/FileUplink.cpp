@@ -115,7 +115,9 @@ void FileUplink::handleStartPacket(const Fw::FilePacket::StartPacket& startPacke
     }
 }
 
+extern "C" void uplink_trace(unsigned char, unsigned short);
 void FileUplink::handleDataPacket(const Fw::FilePacket::DataPacket& dataPacket) {
+    uplink_trace(4, (unsigned short)dataPacket.asHeader().getSequenceIndex());
     this->m_packetsReceived.packetReceived();
     if (this->m_receiveMode != DATA) {
         this->m_warnings.invalidReceiveMode(Fw::FilePacket::T_DATA);
@@ -137,6 +139,7 @@ void FileUplink::handleDataPacket(const Fw::FilePacket::DataPacket& dataPacket) 
         return;
     }
     const Os::File::Status status = this->m_file.write(dataPacket.getData(), byteOffset, dataSize);
+    uplink_trace(5, (unsigned short)sequenceIndex);
     if (status != Os::File::OP_OK) {
         this->m_warnings.fileWrite(this->m_file.name);
     }
