@@ -25,7 +25,9 @@ TmFramer ::~TmFramer() {}
 // Handler implementations for typed input ports
 // ----------------------------------------------------------------------
 
+extern "C" void uplink_trace(unsigned char, unsigned short);
 void TmFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const ComCfg::FrameContext& context) {
+    uplink_trace(24, (unsigned short)data.getSize());
     FW_ASSERT(data.getSize() <= ComCfg::TmFrameFixedSize - TMHeader::SERIALIZED_SIZE - TMTrailer::SERIALIZED_SIZE,
               static_cast<FwAssertArgType>(data.getSize()));
     FW_ASSERT(this->m_bufferState == BufferOwnershipState::OWNED, static_cast<FwAssertArgType>(this->m_bufferState));
@@ -86,6 +88,7 @@ void TmFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const ComC
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
 
     this->m_bufferState = BufferOwnershipState::NOT_OWNED;
+    uplink_trace(25, (unsigned short)frameBuffer.getSize());
     this->dataOut_out(0, frameBuffer, context);
     this->dataReturnOut_out(0, data, context);  // return ownership of the original data buffer
 }

@@ -11,6 +11,9 @@
 #include "Svc/Ccsds/Utils/CRC16.hpp"
 #include "config/FpConfig.hpp"
 
+// PROTOTYPE uplink latency tracing
+extern "C" void uplink_trace(unsigned char st, unsigned short a);
+
 namespace Svc {
 namespace Ccsds {
 
@@ -33,6 +36,7 @@ void TcDeframer::configure(U16 vcId, U16 spacecraftId, bool acceptAllVcid) {
 // ----------------------------------------------------------------------
 
 void TcDeframer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const ComCfg::FrameContext& context) {
+    uplink_trace(31, static_cast<unsigned short>(data.getSize()));  // PROTOTYPE
     // CCSDS TC Format:
     // 5 octets - TC Primary Header
     // Up to 1019 octets - Data Field (including optional 2 octets frame error control field)

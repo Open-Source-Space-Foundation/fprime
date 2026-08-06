@@ -8,6 +8,9 @@
 #include "Fw/FPrimeBasicTypes.hpp"
 #include "Fw/Types/Assert.hpp"
 
+// PROTOTYPE uplink latency tracing
+extern "C" void uplink_trace(unsigned char st, unsigned short a);
+
 namespace Svc {
 
 // ----------------------------------------------------------------------
@@ -51,6 +54,7 @@ void FrameAccumulator ::cleanup() {
 // ----------------------------------------------------------------------
 
 void FrameAccumulator ::dataIn_handler(FwIndexType portNum, Fw::Buffer& buffer, const ComCfg::FrameContext& context) {
+    uplink_trace(30, static_cast<unsigned short>(buffer.getSize()));  // PROTOTYPE
     // Check whether there is data to process
     if (buffer.isValid()) {
         // The buffer is not necessarily a full frame, so the attached context has no meaning and we ignore it

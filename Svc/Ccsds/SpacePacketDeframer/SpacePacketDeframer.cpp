@@ -8,6 +8,9 @@
 #include "Svc/Ccsds/Types/FppConstantsAc.hpp"
 #include "Svc/Ccsds/Types/SpacePacketHeaderSerializableAc.hpp"
 
+// PROTOTYPE uplink latency tracing
+extern "C" void uplink_trace(unsigned char st, unsigned short a);
+
 namespace Svc {
 
 namespace Ccsds {
@@ -25,6 +28,7 @@ SpacePacketDeframer ::~SpacePacketDeframer() {}
 // ----------------------------------------------------------------------
 
 void SpacePacketDeframer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const ComCfg::FrameContext& context) {
+    uplink_trace(32, static_cast<unsigned short>(data.getSize()));  // PROTOTYPE
     // ################################
     // CCSDS SpacePacket Format:
     // 6 octets - Primary Header

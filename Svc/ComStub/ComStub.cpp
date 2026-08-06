@@ -23,7 +23,9 @@ ComStub::~ComStub() {}
 // Handler implementations for user-defined typed input ports
 // ----------------------------------------------------------------------
 
+extern "C" void uplink_trace(unsigned char, unsigned short);
 void ComStub::dataIn_handler(const FwIndexType portNum, Fw::Buffer& sendBuffer, const ComCfg::FrameContext& context) {
+    uplink_trace(26, (unsigned short)sendBuffer.getSize());
     // A message should never get here if we need to reinitialize
     FW_ASSERT(!this->m_reinitialize || !this->isConnected_comStatusOut_OutputPort(0));
     if (this->isConnected_drvSendOut_OutputPort(0)) {
@@ -90,6 +92,7 @@ void ComStub::handleSynchronousSend(Fw::Buffer& sendBuffer, const ComCfg::FrameC
 
     // Send to driver (and retry up to the retry limit)
     for (FwIndexType i = 0; sendStatus == Drv::ByteStreamStatus::SEND_RETRY && i < RETRY_LIMIT; i++) {
+        uplink_trace(27, (unsigned short)sendBuffer.getSize());
         sendStatus = this->drvSendOut_out(0, sendBuffer);
     }
 
