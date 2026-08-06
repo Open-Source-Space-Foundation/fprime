@@ -103,6 +103,7 @@ void FileUplink::handleStartPacket(const Fw::FilePacket::StartPacket& startPacke
     this->log_WARNING_HI_PacketOutOfOrder_ThrottleClear();
     this->m_packetsReceived.packetReceived();
     if (this->m_receiveMode != START) {
+        (void)this->m_file.flush();  // PROTOTYPE: drain RAM stage before close
         this->m_file.osFile.close();
         this->m_warnings.invalidReceiveMode(Fw::FilePacket::T_START);
     }
@@ -196,6 +197,11 @@ void FileUplink::compareChecksums(const Fw::FilePacket::EndPacket& endPacket) {
 }
 
 void FileUplink::goToStartMode() {
+    // PROTOTYPE: drain RAM stage before close; a failed final flush is a real
+    // file-write failure and must not be silent
+    if (this->m_file.flush() != Os::File::OP_OK) {
+        this->m_warnings.fileWrite(this->m_file.name);
+    }
     this->m_file.osFile.close();
     this->m_receiveMode = START;
     this->m_lastSequenceIndex = 0;

@@ -55,8 +55,24 @@ class FileUplink final : public FileUplinkComponentBase {
         //! Write bytes into the OS file and update the checksum
         Os::File::Status write(const U8* const data, const U32 byteOffset, const U32 length);
 
+        //! Flush any RAM-staged bytes to the OS file (must be called before close)
+        Os::File::Status flush();
+
         //! Get the checksum
         void getChecksum(::CFDP::Checksum& checksum) { checksum = this->m_checksum; }
+
+      private:
+        // PROTOTYPE (uplink throughput): RAM write staging. Sequential packet
+        // payloads are accumulated here and written to the (SD-backed) OS file
+        // in STAGE_SIZE extents instead of one ~200B seek+write per packet.
+        // Measured per-packet SD write cost was ~8ms median (FatFs sector RMW
+        // over SPI) in the ack critical path; staging reduces SD transactions
+        // ~40x for a 204B chunk size. Non-sequential offsets and oversized
+        // writes force a flush then take the direct path.
+        static constexpr U32 STAGE_SIZE = 8192;
+        U8 m_stage[STAGE_SIZE];
+        U32 m_stageBase = 0;  //!< file byte offset of m_stage[0]
+        U32 m_stageLen = 0;   //!< valid bytes currently staged
     };
 
     //! Object to record files received
