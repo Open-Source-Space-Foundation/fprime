@@ -22,9 +22,12 @@ U32 crc32_ieee802_3_update(const U8* data, FwSizeType length, U32 crc);
 
 //! Define the size of a hash digest in bytes for this
 //! implementation. This is required.
-#ifndef HASH_DIGEST_LENGTH
-#define HASH_DIGEST_LENGTH (4)
+//! A vendor header may already define this name (the STM32 HAL defines a
+//! function-like HASH_DIGEST_LENGTH()), so replace it rather than skip.
+#ifdef HASH_DIGEST_LENGTH
+#undef HASH_DIGEST_LENGTH
 #endif
+#define HASH_DIGEST_LENGTH (4)
 
 //! Define the string to be used as a filename
 //! extension (ie. file.txt.SHA256) for this
